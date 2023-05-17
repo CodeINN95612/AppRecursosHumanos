@@ -1,4 +1,38 @@
-﻿<MudNavMenu>
-    <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AttachMoney" Href="/centroCostos">Centro Costos</MudNavLink>
-    <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.MonetizationOn" Href="/movimientoPlanilla">Movimiento Planilla</MudNavLink>
+﻿@using RecursosHumanos.Client.Components.Dialogs;
+@using RecursosHumanos.Client.Services.Common;
+
+@inject NavigationManager _navManager;
+@inject IDialogService _mudDialogService;
+@inject ILogger<NavMenu> _logger;
+@inject DialogMsgService _dialogService;
+
+<MudNavMenu>
+    <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AttachMoney" OnClick="@(()=>NavegarMovimientoPlanilla("centroCostos"))">Centro Costos</MudNavLink>
+    <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.MonetizationOn" OnClick="@(()=>NavegarMovimientoPlanilla("movimientoPlanilla"))">Movimiento Planilla</MudNavLink>
 </MudNavMenu>
+
+@code
+{
+    private async void NavegarMovimientoPlanilla(string nav)
+    {
+        var options = new DialogOptions { CloseButton = false, MaxWidth = MaxWidth.Small, DisableBackdropClick = true };
+        var dialog = await _mudDialogService.ShowAsync<AutorizadorLoginDialog>("Login Autorizador", options);
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+        {
+
+            await _dialogService.ShowDialogAsync("No tiene acceso a la pagina", false);
+            return;
+        }
+
+        if (result.Data is not null)
+        {
+
+            var msg = result.Data as string;
+            await _dialogService.ShowDialogAsync($"No tiene acceso a la pagina. {msg}", false);
+            return;
+        }
+        _navManager.NavigateTo(nav);
+    }
+}

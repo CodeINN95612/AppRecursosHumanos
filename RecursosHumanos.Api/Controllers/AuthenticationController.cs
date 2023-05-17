@@ -33,4 +33,11 @@ public class AuthenticationController : RecursosHumanosApi
         var usuarioResult = await _authenticationService.GetByJwt(request.jwtToken);
         return usuarioResult.Match(Ok, Problem);
     }
+
+    [HttpPost("logInAutorizador")]
+    public async Task<IActionResult> LogInAutorizador(AutorizadorLoginRequest request)
+    {
+        var usuarioResult = await _authenticationService.LogInAutorizador(request.Username, request.Password);
+        return usuarioResult.Match(Ok, Problem);
+    }
 }

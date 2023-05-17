@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecursosHumanos.Shared", "R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecursosHumanos.Test.Api", "RecursosHumanos.Test.Api\RecursosHumanos.Test.Api.csproj", "{528782AB-BB1D-4F63-88AA-5EFEA469CA25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecursosHumanos.Client", "RecursosHumanos.Client\RecursosHumanos.Client.csproj", "{A0E9BC29-2956-4311-84CC-34B97F20D84F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecursosHumanos.Client", "RecursosHumanos.Client\RecursosHumanos.Client.csproj", "{A0E9BC29-2956-4311-84CC-34B97F20D84F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

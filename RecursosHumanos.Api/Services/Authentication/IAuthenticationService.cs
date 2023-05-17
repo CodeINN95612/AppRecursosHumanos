@@ -7,5 +7,6 @@ namespace RecursosHumanos.Api.Services.Authentication
     {
         public Task<ErrorOr<UsuarioAutenticado>> LogIn(string username, string password, int codigoEmisor);
         public Task<ErrorOr<Usuario>> GetByJwt(string jwtToken);
+        public Task<ErrorOr<Usuario>> LogInAutorizador(string username, string password);
     }
 }

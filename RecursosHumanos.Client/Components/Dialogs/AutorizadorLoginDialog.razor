@@ -1,0 +1,72 @@
+﻿@using RecursosHumanos.Client.Services.Auth;
+@using RecursosHumanos.Shared.Models;
+@using RecursosHumanos.Shared.Requests;
+@inject IAuthenticationService _authService;
+@inject ILogger<AutorizadorLoginDialog> _logger;
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Login" Class="mr-3 mb-n1" />
+            Ingresar con Autorizador
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField Label="Usuario" @bind-Value="_username" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.VerifiedUser" Mask="@(new PatternMask("000"))" c/>
+        <MudTextField Label="Contraseña" @bind-Value="_password" InputType="InputType.Password" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Password" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Color="Color.Secondary">Cancelar</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Submit">Ingresar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] 
+    MudDialogInstance? MudDialog { get; set; }
+
+    public string _username = "";
+    public string _password = "";
+
+    protected override Task OnInitializedAsync()
+    {
+        _logger.LogWarning("Initializing Dialog");
+        return base.OnInitializedAsync();
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        _logger.LogWarning("Rendered");
+        if (MudDialog is null)
+            _logger.LogWarning("MudDialog is null");
+
+    }
+
+    async void Submit()
+    {
+        _logger.LogWarning("Closing");
+        MudDialog?.Close(DialogResult.Ok<string?>(null));
+        return;
+
+        if(string.IsNullOrEmpty(_username) || string.IsNullOrEmpty(_password))
+        {
+            MudDialog?.Close(DialogResult.Ok<string?>("Invalid Credentials"));
+        }
+
+        try
+        {
+            AutorizadorLoginRequest request = new(_username, _password);
+            await _authService.LogInAutorizador(request);
+            MudDialog?.Close(DialogResult.Ok<string?>(null));
+        }
+        catch(Exception e)
+        {
+            MudDialog?.Close(DialogResult.Ok<string?>(e.Message));
+        }
+    }
+
+    void Cancel() => MudDialog?.Cancel();
+}

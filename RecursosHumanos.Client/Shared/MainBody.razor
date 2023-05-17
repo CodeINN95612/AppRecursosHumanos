@@ -32,9 +32,12 @@
 <MudDrawer @bind-Open="_drawerOpen" Elevation="25" ClipMode="DrawerClipMode.Always">
     <NavMenu />
 </MudDrawer>
-<MudMainContent>
+<MudMainContent Style="height: 100vh;">
     <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
         @ChildContent
     </MudContainer>
+    <MudPaper Elevation="1" Style="position:fixed; bottom:0; width: 100%; background-color: purple;">
+        @_usuario.Nombre
+    </MudPaper>
 </MudMainContent>
 

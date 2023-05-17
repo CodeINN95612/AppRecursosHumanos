@@ -58,6 +58,7 @@
         {
             LoginRequest request = new(_form.Usuario, _form.Password, _form.CodigoEmisor);
             var usuario = await _authService.Login(request);
+            await _dialogService.ShowDialogAsync($"Bienvenido: {usuario.Compania.Nombre}-{DateTime.Today.ToShortDateString()}", true);
             _form = new();
             _navManager.NavigateTo("/");
         }

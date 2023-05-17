@@ -85,4 +85,41 @@ public class AuthenticationService : IAuthenticationService
 
         return new Usuario(claims["nombre"], claims["empresa"], DateTime.Today);
     }
+
+    public async Task<ErrorOr<Usuario>> LogInAutorizador(string username, string password)
+    {
+        var response = await _httpClient.GetAsync($"Varios/GetAutorizador?usuario={username}&password={password}");
+
+        if (response is null || !response.IsSuccessStatusCode)
+        {
+            return GeneralErrors.NotFound;
+        }
+
+        var jsonContent = await response.Content.ReadAsStringAsync();
+        if (jsonContent.Contains("error"))
+        {
+            return AuthenticationErrors.InvalidCredentials;
+        }
+
+        string usuariosEcuasolString;
+
+        try
+        {
+            usuariosEcuasolString = JsonConvert.DeserializeObject<string>(jsonContent) ?? "";
+        }
+        catch
+        {
+            usuariosEcuasolString = jsonContent;
+        }
+
+        var usuariosEcuasol = JsonConvert.DeserializeObject<List<EcuasolUser>>(usuariosEcuasolString) ?? new();
+        foreach (var usuario in usuariosEcuasol)
+        {
+            if (usuario.Observacion == "INGRESO EXITOSO")
+            {
+                return new Usuario(usuario.NombreUsuario, "", DateTime.Today);
+            }
+        }
+        return AuthenticationErrors.InvalidCredentials;
+    }
 }

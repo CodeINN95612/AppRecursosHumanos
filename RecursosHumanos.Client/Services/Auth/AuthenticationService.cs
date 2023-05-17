@@ -36,4 +36,10 @@ public class AuthenticationService : IAuthenticationService
         var usuario = await _restClientService.Post<Usuario, JwtUserRequest>($"Authentication/getByJwt", request);
         return usuario;
     }
+
+    public async Task<Usuario> LogInAutorizador(AutorizadorLoginRequest request)
+    {
+        var usuario = await _restClientService.Post<Usuario, AutorizadorLoginRequest>($"Authentication/logInAutorizador", request);
+        return usuario;
+    }
 }
