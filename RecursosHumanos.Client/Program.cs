@@ -16,7 +16,9 @@ using RecursosHumanos.Client.Services.EmisorService;
 using RecursosHumanos.Client.Services.Http;
 using RecursosHumanos.Client.Services.MovimientoExcepcionService;
 using RecursosHumanos.Client.Services.MovimientoPlanillaService;
+using RecursosHumanos.Client.Services.Parametros;
 using RecursosHumanos.Client.Services.TipoOperacionService;
+using RecursosHumanos.Client.Services.TrabajadorService;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -56,6 +58,8 @@ builder.Services.AddScoped<IMovimientoExcepcionService, MovimientoExcepcionServi
 builder.Services.AddScoped<IAplicaIESSService, AplicaIESSService>();
 builder.Services.AddScoped<IAplicaImpuestoRentaService, AplicaImpuestoRentaService>();
 builder.Services.AddScoped<IMovimientoPlanillaService, MovimientoPlanillaService>();
+builder.Services.AddScoped<IParametroTrabajadorService, ParametroTrabajadorService>();
+builder.Services.AddScoped<ITrabajadorService, TrabajadorService>();
 
 builder.Services.AddScoped<JwtAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(p => p.GetRequiredService<JwtAuthenticationStateProvider>());

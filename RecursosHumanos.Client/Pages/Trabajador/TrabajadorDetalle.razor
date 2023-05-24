@@ -1,0 +1,372 @@
+﻿@page "/trabajador/{CodigoSucursal:int}/{IdTrabajador:int}"
+
+@using RecursosHumanos.Client.Data.Forms;
+@using RecursosHumanos.Client.Services.CentroCostosService;
+@using RecursosHumanos.Client.Services.Common;
+@using RecursosHumanos.Client.Services.Parametros;
+@using RecursosHumanos.Client.Services.TrabajadorService;
+@using RecursosHumanos.Shared.Models;
+@using RecursosHumanos.Shared.Requests.Trabajador;
+
+@inject NavigationManager _navManager;
+@inject DialogMsgService _dialogService;
+@inject ITrabajadorService _trabajadorService;
+@inject IParametroTrabajadorService _parametroService;
+@inject ICentroCostosService _centroCostosService;
+
+@if (_loading)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+
+    <EditForm Model="@_form" OnValidSubmit="@(async (e) => await Guardar())" OnInvalidSubmit="@(() => Invalid())">
+        <DataAnnotationsValidator />
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Trabajador Sucursal @CodigoSucursal</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                @if (!_EsNuevo)
+                {
+                    <MudNumericField Label="Id"
+                             @bind-Value="_form.IdTrabajador" For="@(() => _form.IdTrabajador)" Disabled="true" />
+                }
+                <MudSelect T="string" Label="Tipo Trabajador" @bind-Value="_form.CodigoTipoTrabajador" For="@(() => _form.CodigoTipoTrabajador)">
+                    @foreach (var items in _listaTipoTrabajador)
+                    {
+                        <MudSelectItem Value="items.Codigo">@items.Codigo - @items.Nombre</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField Label="Apellido Paterno"
+                          @bind-Value="_form.ApellidoPaterno" For="@(() => _form.ApellidoPaterno)" />
+                <MudTextField Label="Apellido Materno"
+                          @bind-Value="_form.ApellidoMaterno" For="@(() => _form.ApellidoMaterno)" />
+                <MudTextField Label="Nombres"
+                          @bind-Value="_form.Nombres" For="@(() => _form.Nombres)" />
+                <MudTextField Label="Identificacion" Mask="@(new PatternMask("0000000000"))"
+                          @bind-Value="_form.Identificacion" For="@(() => _form.Identificacion)" />
+                <MudTextField Label="Entidad Bancaria"
+                          @bind-Value="_form.EntidadBancaria" For="@(() => _form.EntidadBancaria)" />
+                <MudTextField Label="Carnet IESS"
+                          @bind-Value="_form.CarnetIESS" For="@(() => _form.CarnetIESS)" />
+                <MudTextField Label="Dirección"
+                          @bind-Value="_form.Direccion" For="@(() => _form.Direccion)" />
+                <MudTextField Label="Teléfono Fijo" Mask="@(new PatternMask("000000000"))"
+                          @bind-Value="_form.TelefonoFijo" For="@(() => _form.TelefonoFijo)" />
+                <MudTextField Label="Teléfono Movil" Mask="@(new PatternMask("0000000000"))"
+                          @bind-Value="_form.TelefonoMovil" For="@(() => _form.TelefonoMovil)" />
+                <MudSelect T="string" Label="Sexo" @bind-Value="_form.CodigoSexo" For="@(() => _form.CodigoSexo)">
+                    @foreach (var items in _listaSexo)
+                    {
+                        <MudSelectItem Value="items.Codigo">@items.Codigo - @items.Nombre</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField Label="Cuenta Bancaria"
+                          @bind-Value="_form.NumeroCuentaBancaria" For="@(() => _form.NumeroCuentaBancaria)" />
+                <MudTextField Label="Codigo Categoria Ocupación"
+                          @bind-Value="_form.CodigoCategoriaOcupacion" For="@(() => _form.CodigoCategoriaOcupacion)" />
+                <MudTextField Label="Ocupación"
+                          @bind-Value="_form.Ocupacion" For="@(() => _form.Ocupacion)" />
+                <MudSelect T="string" Label="Centro de Costos" @bind-Value="_form.CodigoCentroCostos" For="@(() => _form.CodigoCentroCostos)">
+                    @foreach (var items in _listaCentroCostos)
+                    {
+                        <MudSelectItem Value="@items.CodigoStr">@items.CodigoStr - @items.Nombre</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField Label="Nivel Salarial"
+                          @bind-Value="_form.NivelSalarial" For="@(() => _form.NivelSalarial)" />
+                <MudSelect T="string" Label="Estado Trabajador" @bind-Value="_form.CodigoEstadoTrabajador" For="@(() => _form.CodigoEstadoTrabajador)">
+                    @foreach (var items in _listaEstadoTrabajador)
+                    {
+                        <MudSelectItem Value="items.Codigo">@items.Codigo - @items.Nombre</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="string" Label="Tipo Contrato" @bind-Value="_form.CodigoTipoContrato" For="@(() => _form.CodigoTipoContrato)">
+                    @foreach (var items in _listaTipoContrato)
+                    {
+                        <MudSelectItem Value="items.Codigo">@items.Codigo - @items.Nombre</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="string" Label="Tipo Cese" @bind-Value="_form.CodigoTipoCese" For="@(() => _form.CodigoTipoCese)">
+                    @foreach (var items in _listaTipoCese)
+                    {
+                        <MudSelectItem Value="items.Codigo">@items.Codigo - @items.Nombre</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="string" Label="Estado Civil" @bind-Value="_form.CodigoEstadoCivil" For="@(() => _form.CodigoEstadoCivil)">
+                    @foreach (var items in _listaEstadoCivil)
+                    {
+                        <MudSelectItem Value="items.Codigo">@items.Codigo - @items.Nombre</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField Label="Tipo Comisión"
+                          @bind-Value="_form.TipoComision" For="@(() => _form.TipoComision)" />
+                <MudDatePicker Label="Fecha Nacimiento"
+                           @bind-Date="_form.FechaNacimiento" For="@(() => _form.FechaNacimiento)" />
+                <MudDatePicker Label="Fecha Ingreso"
+                           @bind-Date="_form.FechaIngreso" For="@(() => _form.FechaIngreso)" />
+                <MudDatePicker Label="Fecha Cese"
+                           @bind-Date="_form.FechaCese" For="@(() => _form.FechaCese)" />
+                <MudNumericField Label="Periodo vacaciones"
+                             @bind-Value="_form.PeriodoVacaciones" For="@(() => _form.PeriodoVacaciones)"/>
+                <MudDatePicker Label="Fecha Reingreso"
+                           @bind-Date="_form.FechaReingreso" For="@(() => _form.FechaReingreso)" />
+                <MudSelect T="string" Label="Es Reingreso" @bind-Value="_form.CodigoEsReingreso" For="@(() => _form.CodigoEsReingreso)">
+                    @foreach (var items in _listaEsReingreso)
+                    {
+                        <MudSelectItem Value="items.Codigo">@items.Codigo - @items.Nombre</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="string" Label="Tipo Cuenta" @bind-Value="_form.CodigoTipoCuenta" For="@(() => _form.CodigoTipoCuenta)">
+                    @foreach (var items in _listaTipoCuenta)
+                    {
+                        <MudSelectItem Value="items.Codigo">@items.Codigo - @items.Nombre</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField Label="Banco CTA CTE"
+                          @bind-Value="_form.BancoCTA_CTE" For="@(() => _form.BancoCTA_CTE)" />
+                <MudNumericField Label="Bonificacion Complementaria"
+                             @bind-Value="_form.BonificacionComplementaria" For="@(() => _form.BonificacionComplementaria)" />
+                <MudNumericField Label="Bonificacion Especial"
+                             @bind-Value="_form.BonificacionEspecial" For="@(() => _form.BonificacionEspecial)" />
+                <MudNumericField Label="Remuneración Mínima"
+                             @bind-Value="_form.RemuneracionMinima" For="@(() => _form.RemuneracionMinima)" />
+                <MudNumericField Label="Cuota Cuenta Corriente"
+                             @bind-Value="_form.CuotaCuentaCorriente" For="@(() => _form.CuotaCuentaCorriente)" />
+                <MudTextField Label="Fondo Reserva"
+                          @bind-Value="_form.FondoReserva" For="@(() => _form.FondoReserva)" />
+                <MudTextField Label="Mensaje (opcional)" Class="mt-3" Lines="2" Variant="Variant.Filled"
+                          @bind-Value="_form.Mensaje" For="@(() => _form.Mensaje)" />
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Guardar</MudButton>
+                <MudSpacer />
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@Salir">Salir</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int CodigoSucursal { get; set; }
+
+    [Parameter]
+    public int IdTrabajador { get; set; }
+
+    private bool _loading = false;
+    private bool _EsNuevo => IdTrabajador is 0;
+    private TrabajadorForm _form = new();
+
+    private List<ParametroTrabajador> _listaTipoTrabajador = new();
+    private List<ParametroTrabajador> _listaSexo = new();
+    private List<ParametroTrabajador> _listaEstadoTrabajador = new();
+    private List<ParametroTrabajador> _listaTipoContrato = new();
+    private List<ParametroTrabajador> _listaTipoCese = new();
+    private List<ParametroTrabajador> _listaEstadoCivil = new();
+    private List<ParametroTrabajador> _listaEsReingreso = new();
+    private List<ParametroTrabajador> _listaTipoCuenta = new();
+    private List<CentroCostos> _listaCentroCostos = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (!firstRender)
+            return;
+
+        await Cargar();
+    }
+
+    private async Task Cargar()
+    {
+        _loading = true;
+        StateHasChanged();
+
+        try
+        {
+            _listaTipoTrabajador = await _parametroService.GetAllTipoTrabajador();
+            _listaSexo = await _parametroService.GetAllSexo();
+            _listaEstadoTrabajador = await _parametroService.GetAllEstadoTrabajador();
+            _listaTipoContrato = await _parametroService.GetAllTipoContrato();
+            _listaTipoCese = await _parametroService.GetAllTipoCese();
+            _listaEstadoCivil = await _parametroService.GetAllEstadoCivil();
+            _listaEsReingreso = await _parametroService.GetAllEsReingreso();
+            _listaTipoCuenta = await _parametroService.GetAllTipoCuenta();
+            _listaCentroCostos = await _centroCostosService.GetAll();
+
+            if (_EsNuevo)
+            {
+                _form = new();
+            }
+            else
+            {
+                var trabajador = await _trabajadorService.GetById(IdTrabajador, CodigoSucursal);
+                IdTrabajador = trabajador.IdTrabajador;
+                CodigoSucursal = trabajador.CodigoSucursal;
+                _form = new TrabajadorForm
+                    {
+                        CodigoSucursal = trabajador.CodigoSucursal,
+                        ApellidoMaterno = trabajador.ApellidoMaterno,
+                        ApellidoPaterno = trabajador.ApellidoPaterno,
+                        BancoCTA_CTE = trabajador.BancoCTA_CTE,
+                        BonificacionComplementaria = trabajador.BonificacionComplementaria,
+                        BonificacionEspecial = trabajador.BonificacionEspecial,
+                        CarnetIESS = trabajador.CarnetIESS,
+                        CodigoCategoriaOcupacion = "",
+                        CodigoCentroCostos = "",
+                        CodigoEsReingreso = "",
+                        CodigoEstadoCivil = "",
+                        CodigoEstadoTrabajador = "",
+                        CodigoSexo = "",
+                        CodigoTipoCese = "",
+                        CodigoTipoContrato = "",
+                        CodigoTipoCuenta = "",
+                        CodigoTipoTrabajador = "",
+                        CuotaCuentaCorriente = trabajador.CuotaCuentaCorriente,
+                        Direccion = trabajador.Direccion,
+                        EntidadBancaria = trabajador.EntidadBancaria,
+                        FechaCese = trabajador.FechaCese,
+                        FechaIngreso = trabajador.FechaIngreso,
+                        FechaNacimiento = trabajador.FechaNacimiento,
+                        FechaReingreso = trabajador.FechaReingreso,
+                        FondoReserva = trabajador.FondoReserva,
+                        Identificacion = trabajador.Identificacion,
+                        IdTrabajador = trabajador.IdTrabajador,
+                        Mensaje = trabajador.Mensaje,
+                        NivelSalarial = trabajador.NivelSalarial,
+                        Nombres = trabajador.Nombres,
+                        NumeroCuentaBancaria = trabajador.NumeroCuentaBancaria,
+                        Ocupacion = trabajador.Ocupacion,
+                        PeriodoVacaciones = trabajador.PeriodoVacaciones,
+                        RemuneracionMinima = trabajador.RemuneracionMinima,
+                        TelefonoFijo = trabajador.TelefonoFijo,
+                        TelefonoMovil = trabajador.TelefonoMovil,
+                        TipoComision = trabajador.TipoComision,
+                    };
+            }
+        }
+        catch (Exception e)
+        {
+            await _dialogService.ShowDialogAsync(e.Message, true);
+        }
+        finally
+        {
+            _loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async void Invalid()
+    {
+        await _dialogService.ShowDialogAsync("Invalid", true);
+    }
+
+    private async Task Guardar()
+    {
+        try
+        {
+            if (_EsNuevo)
+            {
+
+                InsertTrabajadorRequest movimiento = new(
+                    _form.CodigoSucursal,
+                    _form.CodigoTipoTrabajador,
+                    _form.ApellidoPaterno,
+                    _form.ApellidoMaterno,
+                    _form.Nombres,
+                    _form.Identificacion,
+                    _form.EntidadBancaria,
+                    _form.CarnetIESS,
+                    _form.Direccion,
+                    _form.TelefonoFijo,
+                    _form.TelefonoMovil,
+                    _form.CodigoSexo,
+                    _form.NumeroCuentaBancaria,
+                    _form.CodigoCategoriaOcupacion,
+                    _form.Ocupacion,
+                    _form.CodigoCentroCostos,
+                    _form.NivelSalarial,
+                    _form.CodigoEstadoTrabajador,
+                    _form.CodigoTipoContrato,
+                    _form.CodigoTipoCese,
+                    _form.CodigoEstadoCivil,
+                    _form.TipoComision,
+                    _form.FechaNacimiento?? DateTime.MinValue,
+                    _form.FechaIngreso?? DateTime.MinValue,
+                    _form.FechaCese?? DateTime.MinValue,
+                    _form.PeriodoVacaciones,
+                    _form.FechaReingreso ?? DateTime.MinValue,
+                    _form.CodigoEsReingreso,
+                    _form.BancoCTA_CTE,
+                    _form.CodigoTipoCuenta,
+                    _form.BonificacionComplementaria,
+                    _form.BonificacionEspecial,
+                    _form.RemuneracionMinima,
+                    _form.CuotaCuentaCorriente,
+                    _form.FondoReserva,
+                    _form.Mensaje);
+                await _trabajadorService.Insert(movimiento);
+            }
+            else
+            {
+                UpdateTrabajadorRequest request = new(
+                    _form.CodigoSucursal,
+                    _form.IdTrabajador,
+                    _form.CodigoTipoTrabajador,
+                    _form.ApellidoPaterno,
+                    _form.ApellidoMaterno,
+                    _form.Nombres,
+                    _form.Identificacion,
+                    _form.EntidadBancaria,
+                    _form.CarnetIESS,
+                    _form.Direccion,
+                    _form.TelefonoFijo,
+                    _form.TelefonoMovil,
+                    _form.CodigoSexo,
+                    _form.NumeroCuentaBancaria,
+                    _form.CodigoCategoriaOcupacion,
+                    _form.Ocupacion,
+                    _form.CodigoCentroCostos,
+                    _form.NivelSalarial,
+                    _form.CodigoEstadoTrabajador,
+                    _form.CodigoTipoContrato,
+                    _form.CodigoTipoCese,
+                    _form.CodigoEstadoCivil,
+                    _form.TipoComision,
+                    _form.FechaNacimiento ?? DateTime.MinValue,
+                    _form.FechaIngreso?? DateTime.MinValue,
+                    _form.FechaCese?? DateTime.MinValue,
+                    _form.PeriodoVacaciones,
+                    _form.FechaReingreso ?? DateTime.MinValue,
+                    _form.CodigoEsReingreso,
+                    _form.BancoCTA_CTE,
+                    _form.CodigoTipoCuenta,
+                    _form.BonificacionComplementaria,
+                    _form.BonificacionEspecial,
+                    _form.RemuneracionMinima,
+                    _form.CuotaCuentaCorriente,
+                    _form.FondoReserva,
+                    _form.Mensaje);
+                await _trabajadorService.Update(request);
+            }
+        }
+        catch (Exception e)
+        {
+            await _dialogService.ShowDialogAsync(e.Message, true);
+        }
+        finally
+        {
+            _navManager.NavigateTo("/trabajador");
+        }
+    }
+
+    private void Salir()
+    {
+        _navManager.NavigateTo("/trabajador");
+    }
+}

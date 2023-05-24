@@ -9,30 +9,41 @@
 <MudNavMenu>
     <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AttachMoney" OnClick="@(()=>NavegarMovimientoPlanilla("centroCostos"))">Centro Costos</MudNavLink>
     <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.MonetizationOn" OnClick="@(()=>NavegarMovimientoPlanilla("movimientoPlanilla"))">Movimiento Planilla</MudNavLink>
+    <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Boy" OnClick="@(()=>NavegarMovimientoPlanilla("trabajador"))">Trabajador</MudNavLink>
+    <MudNavGroup Title="Parametros" Icon="@Icons.Material.Filled.Settings">
+        <MudNavLink Href="/parametros/trabajador/sexo" Icon="@Icons.Material.Filled.Girl">Sexo</MudNavLink>
+        <MudNavLink Href="/parametros/trabajador/tipoTrabajador" Icon="@Icons.Material.Filled.Engineering">Tipo Trabajador</MudNavLink>
+        <MudNavLink Href="/parametros/trabajador/esReingreso" Icon="@Icons.Material.Filled.Check">Es Reigreso</MudNavLink>
+        <MudNavLink Href="/parametros/trabajador/estadoCivil" Icon="@Icons.Material.Filled.Diversity1">Estado Civil</MudNavLink>
+        <MudNavLink Href="/parametros/trabajador/estadoTrabajador" Icon="@Icons.Material.Filled.GroupOff">Estado Trabajador</MudNavLink>
+        <MudNavLink Href="/parametros/trabajador/tipoContrato" Icon="@Icons.Material.Filled.Gavel">Tipo Contrato</MudNavLink>
+        <MudNavLink Href="/parametros/trabajador/tipoCese" Icon="@Icons.Material.Filled.ShapeLine">Tipo Cese</MudNavLink>
+        <MudNavLink Href="/parametros/trabajador/tipoCuenta" Icon="@Icons.Material.Filled.AccountBox">Tipo Cuenta</MudNavLink>
+    </MudNavGroup>
 </MudNavMenu>
 
 @code
 {
     private async void NavegarMovimientoPlanilla(string nav)
     {
-        var options = new DialogOptions { CloseButton = false, MaxWidth = MaxWidth.Small, DisableBackdropClick = true };
-        var dialog = await _mudDialogService.ShowAsync<AutorizadorLoginDialog>("Login Autorizador", options);
-        var result = await dialog.Result;
+        //var options = new DialogOptions { CloseButton = false, MaxWidth = MaxWidth.Small, DisableBackdropClick = true };
+        //var dialog = await _mudDialogService.ShowAsync<AutorizadorLoginDialog>("Login Autorizador", options);
+        //var result = await dialog.Result;
 
-        if (result.Canceled)
-        {
+        //if (result.Canceled)
+        //{
 
-            await _dialogService.ShowDialogAsync("No tiene acceso a la pagina", false);
-            return;
-        }
+        //    await _dialogService.ShowDialogAsync("No tiene acceso a la pagina", false);
+        //    return;
+        //}
 
-        if (result.Data is not null)
-        {
+        //if (result.Data is not null)
+        //{
 
-            var msg = result.Data as string;
-            await _dialogService.ShowDialogAsync($"No tiene acceso a la pagina. {msg}", false);
-            return;
-        }
+        //    var msg = result.Data as string;
+        //    await _dialogService.ShowDialogAsync($"No tiene acceso a la pagina. {msg}", false);
+        //    return;
+        //}
         _navManager.NavigateTo(nav);
     }
 }

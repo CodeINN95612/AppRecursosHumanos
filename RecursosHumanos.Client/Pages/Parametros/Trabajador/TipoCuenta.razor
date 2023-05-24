@@ -1,0 +1,67 @@
+﻿@page "/parametros/trabajador/tipoCuenta"
+
+@using RecursosHumanos.Client.Services.Common;
+@using RecursosHumanos.Client.Services.Parametros;
+@using RecursosHumanos.Shared.Models;
+
+@inject IParametroTrabajadorService _service;
+@inject DialogMsgService _dialogService;
+
+<MudTable Items="@_items" Filter="@((element) => Filter(element, _searchString))" Dense>
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Tipo Cuenta</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Código</MudTh>
+        <MudTh>Nombre</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Codigo</MudTd>
+        <MudTd>@context.Nombre</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager RowsPerPageString="Filas" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private string _searchString = "";
+    private List<ParametroTrabajador> _items = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (!firstRender)
+            return;
+
+        await Cargar();
+
+    }
+
+    private async Task Cargar()
+    {
+        try
+        {
+            _items = await _service.GetAllTipoCuenta();
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            await _dialogService.ShowDialogAsync(e.Message, true);
+        }
+    }
+
+    private bool Filter(ParametroTrabajador parametro, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (parametro.Codigo.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (parametro.Nombre.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}

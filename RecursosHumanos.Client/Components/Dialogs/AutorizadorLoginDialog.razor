@@ -47,9 +47,6 @@
 
     async void Submit()
     {
-        _logger.LogWarning("Closing");
-        MudDialog?.Close(DialogResult.Ok<string?>(null));
-        return;
 
         if(string.IsNullOrEmpty(_username) || string.IsNullOrEmpty(_password))
         {

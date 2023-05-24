@@ -8,7 +8,7 @@
 @inject DialogMsgService _dialogService;
 @inject NavigationManager _navManager;
 
-<MudTable Items="@_items" Filter="@((element) => Filter(element, _searchString))">
+<MudTable Items="@_items" Filter="@((element) => Filter(element, _searchString))" Dense>
     <ToolBarContent>
         <MudText Typo="Typo.h6">Centros de Costos</MudText>
         <MudSpacer />
@@ -34,7 +34,7 @@
         <MudTablePager RowsPerPageString="Filas" />
     </PagerContent>
 </MudTable>
-<MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" Label="Nuevo" Style="margin-top:1em;" OnClick="@Nuevo"/>
+<MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" Label="Nuevo" Style="margin-top:1em;" OnClick="@Nuevo" Class="mb-5"/>
 
 @code {
     private string _searchString = "";

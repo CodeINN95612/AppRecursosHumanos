@@ -6,7 +6,9 @@ using RecursosHumanos.Api.Services.CentroCostosService;
 using RecursosHumanos.Api.Services.EmisorService;
 using RecursosHumanos.Api.Services.MovimientoExcepcionService;
 using RecursosHumanos.Api.Services.MovimientoPlanillaService;
+using RecursosHumanos.Api.Services.Parametros;
 using RecursosHumanos.Api.Services.TipoOperacionService;
+using RecursosHumanos.Api.Services.TrabajadorService;
 using RecursosHumanos.Api.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +31,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<IAplicaIESSService, AplicaIESSService>();
     builder.Services.AddScoped<IAplicaImpuestoRentaService, AplicaImpuestoRentaService>();
     builder.Services.AddScoped<IMovimientoPlanillaService, MovimientoPlanillaService>();
+    builder.Services.AddScoped<IParametrosTrabajadorService, ParametrosTrabajadorService>();
+    builder.Services.AddScoped<ITrabajadorService, TrabajadorService>();
 
     builder.Services.AddCors(c =>
     {

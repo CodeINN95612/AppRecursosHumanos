@@ -1,0 +1,114 @@
+﻿@page "/trabajador"
+
+@using RecursosHumanos.Client.Services.Common;
+@using RecursosHumanos.Client.Services.TrabajadorService;
+@using RecursosHumanos.Shared.Models;
+@using RecursosHumanos.Shared.Requests.Trabajador;
+
+@inject DialogMsgService _dialogService;
+@inject NavigationManager _navManager;
+@inject ITrabajadorService _trabajadorService;
+
+<MudContainer MaxWidth="MaxWidth.ExtraSmall">
+<MudToolBar Class="mb-4">
+        <MudNumericField @bind-Value="_sucursal" Label="Sucursal" Variant="Variant.Outlined" Class="mr-4" />
+        <MudButton OnClick="SearchLista" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" Variant="Variant.Outlined">Buscar</MudButton>
+</MudToolBar>
+</MudContainer>
+
+<MudTable Items="@_trabajadores" Filter="@((element) => Filter(element, _searchString))" Dense>
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Trabajador</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>#</MudTh>
+        <MudTh>Apellido Paterno</MudTh>
+        <MudTh>Apellido Materno</MudTh>
+        <MudTh>Nombres</MudTh>
+        <MudTh></MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.IdTrabajador</MudTd>
+        <MudTd>@context.ApellidoPaterno</MudTd>
+        <MudTd>@context.ApellidoMaterno</MudTd>
+        <MudTd>@context.Nombres</MudTd>
+        <MudTd>
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" Size="Size.Small" OnClick="@(() => Editar(@context))" />
+        </MudTd>
+        <MudTd>
+            <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Delete" Size="Size.Small" OnClick="@(() => Borrar(@context))" />
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager RowsPerPageString="Filas" />
+    </PagerContent>
+</MudTable>
+<MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" Label="Nuevo" Style="margin-top:1em;" OnClick="@Nuevo" Class="mb-5" />
+
+@code {
+    private int _sucursal = 1;
+
+    private async void SearchLista()
+    {
+        await Cargar();
+    }
+
+    private string _searchString = "";
+    private List<Trabajador> _trabajadores = new();
+
+    private async Task Cargar()
+    {
+        try
+        {
+            _trabajadores = await _trabajadorService.GetAllBySucursal(_sucursal);
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            await _dialogService.ShowDialogAsync(e.Message, true);
+        }
+    }
+
+    private void Editar(Trabajador item)
+    {
+        _navManager.NavigateTo($"trabajador/{_sucursal}/{item.IdTrabajador}");
+    }
+
+    private async void Borrar(Trabajador item)
+    {
+        try
+        {
+            DeleteTrabajadorRequest request = new(item.CodigoSucursal, item.IdTrabajador);
+            await _trabajadorService.Delete(request);
+            await _dialogService.ShowDialogAsync($"Eliminado {item.Nombres}", true);
+            await Cargar();
+        }
+        catch (Exception e)
+        {
+            await _dialogService.ShowDialogAsync(e.Message);
+        }
+    }
+
+    private void Nuevo()
+    {
+        _navManager.NavigateTo($"trabajador/{_sucursal}/{0}");
+    }
+
+    private bool Filter(Trabajador trabajador, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (trabajador.IdTrabajador.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (trabajador.ApellidoPaterno.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (trabajador.ApellidoMaterno.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (trabajador.Nombres.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}

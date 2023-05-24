@@ -112,12 +112,13 @@ public class AuthenticationService : IAuthenticationService
             usuariosEcuasolString = jsonContent;
         }
 
-        var usuariosEcuasol = JsonConvert.DeserializeObject<List<EcuasolUser>>(usuariosEcuasolString) ?? new();
+        dynamic usuariosEcuasol = JsonConvert.DeserializeObject(usuariosEcuasolString) ?? new();
         foreach (var usuario in usuariosEcuasol)
         {
-            if (usuario.Observacion == "INGRESO EXITOSO")
+            if (usuario.OBSERVACION == "INGRESO EXITOSO")
             {
-                return new Usuario(usuario.NombreUsuario, "", DateTime.Today);
+                object us = usuario.NOMBREUSUARIO;
+                return new Usuario(us?.ToString() ?? "", "", DateTime.Today);
             }
         }
         return AuthenticationErrors.InvalidCredentials;

@@ -10,7 +10,7 @@ namespace RecursosHumanos.Client.Shared
         public RenderFragment? ChildContent { get; set; }
 
         private bool _drawerOpen = true;
-        private Usuario _usuario = new("Undefined", "Undefined", DateTime.Today);
+        private Usuario _usuario = new("Loading", "Loading", DateTime.Today);
         private void DrawerToggle()
         {
             _drawerOpen = !_drawerOpen;
@@ -55,6 +55,7 @@ namespace RecursosHumanos.Client.Shared
                 await _sessionService.RemoveJwtToken();
                 _stateProvider.MarkUserAsLoggedOut();
             }
+            StateHasChanged();
         }
 
         private async void Salir()
