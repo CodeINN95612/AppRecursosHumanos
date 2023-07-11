@@ -31,8 +31,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<IAplicaIESSService, AplicaIESSService>();
     builder.Services.AddScoped<IAplicaImpuestoRentaService, AplicaImpuestoRentaService>();
     builder.Services.AddScoped<IMovimientoPlanillaService, MovimientoPlanillaService>();
-    builder.Services.AddScoped<IParametrosTrabajadorService, ParametrosTrabajadorService>();
     builder.Services.AddScoped<ITrabajadorService, TrabajadorService>();
+    builder.Services.AddScoped<IParametrosTrabajadorService, ParametrosTrabajadorService>();
 
     builder.Services.AddCors(c =>
     {

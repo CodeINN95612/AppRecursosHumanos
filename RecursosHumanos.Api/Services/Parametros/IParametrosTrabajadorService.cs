@@ -13,4 +13,5 @@ public interface IParametrosTrabajadorService
     public Task<ErrorOr<List<ParametroTrabajador>>> GetAllEstadoCivil();
     public Task<ErrorOr<List<ParametroTrabajador>>> GetAllEsReingreso();
     public Task<ErrorOr<List<ParametroTrabajador>>> GetAllTipoCuenta();
+    public Task<ErrorOr<List<string>>> GetAllCategoriaOcupacion();
 }

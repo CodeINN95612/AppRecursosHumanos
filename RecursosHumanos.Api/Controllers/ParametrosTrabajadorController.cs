@@ -73,5 +73,11 @@ namespace RecursosHumanos.Api.Controllers
             return list.Match(Ok, Problem);
         }
 
+        [HttpGet("getAllCategoriaOcupacion")]
+        public async Task<IActionResult> GetAllCategoriaOcupacion()
+        {
+            var list = await _service.GetAllCategoriaOcupacion();
+            return list.Match(Ok, Problem);
+        }
     }
 }

@@ -59,9 +59,9 @@ public class AuthenticationService : IAuthenticationService
                     usuario.NombreUsuario,
                     usuario.RucUsuario,
                     token,
-                    new Emisor(usuario.Emisor, usuario.NombreEmisor),
-                    new Perfil(usuario.CodigoPerfil, usuario.Perfil),
-                    new Compania(usuario.Compania, usuario.NombreCompania),
+                    new Emisor(usuario.Emisor ?? 0, usuario.NombreEmisor),
+                    new Perfil(usuario.CodigoPerfil ?? 0, usuario.Perfil),
+                    new Compania(usuario.Compania ?? 0, usuario.NombreCompania),
                     new Cliente(usuario.UsuarioCliente));
             }
         }

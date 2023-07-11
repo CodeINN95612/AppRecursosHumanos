@@ -1,21 +1,22 @@
 using Microsoft.Extensions.Options;
 using Moq;
 using RecursosHumanos.Api.Auth;
+using RecursosHumanos.Api.Constants;
 using RecursosHumanos.Api.Services.Authentication;
 using RecursosHumanos.Api.Settings;
-using System.Net;
 
 namespace RecursosHumanos.Test.Api;
 
 public class AuthTests
 {
+    private Mock<IHttpClientFactory> _mockHttpClientFactory;
     private IAuthenticationService _authService;
 
     [SetUp]
     public void Setup()
     {
-        var mockHttpClientFactory = new Mock<IHttpClientFactory>();
-        mockHttpClientFactory.Setup(x => x.CreateClient("Ecuasol"))
+        _mockHttpClientFactory = new Mock<IHttpClientFactory>();
+        _mockHttpClientFactory.Setup(x => x.CreateClient(HttpConstants.HttpClientName))
             .Returns(new HttpClient
             {
                 BaseAddress = new Uri("http://apiservicios.ecuasolmovsa.com:3009/api/")
@@ -33,7 +34,7 @@ public class AuthTests
         mockOptions.Setup(x => x.Value).Returns(settings);
         var jwtGenerator = new JwtTokenGenerator(mockOptions.Object);
 
-        _authService = new AuthenticationService(mockHttpClientFactory.Object, jwtGenerator);
+        _authService = new AuthenticationService(_mockHttpClientFactory.Object, jwtGenerator);
     }
 
     [Test]

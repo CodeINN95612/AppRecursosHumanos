@@ -1,4 +1,5 @@
-﻿using RecursosHumanos.Client.Components.Authorization;
+﻿using Blazored.LocalStorage;
+using RecursosHumanos.Client.Components.Authorization;
 using RecursosHumanos.Client.Services.Http;
 using RecursosHumanos.Shared.Models;
 using RecursosHumanos.Shared.Requests;
@@ -10,15 +11,17 @@ public class AuthenticationService : IAuthenticationService
 {
     private readonly IRestClientService _restClientService;
     private readonly ISessionService _sessionService;
+    private readonly ILocalStorageService _storageService;
     private readonly JwtAuthenticationStateProvider _stateProvider;
     private readonly HttpClient _httpClient;
 
-    public AuthenticationService(IRestClientService restClientService, ISessionService sessionService, JwtAuthenticationStateProvider stateProvider, HttpClient httpClient)
+    public AuthenticationService(IRestClientService restClientService, ISessionService sessionService, JwtAuthenticationStateProvider stateProvider, HttpClient httpClient, ILocalStorageService storageService)
     {
         _restClientService = restClientService;
         _sessionService = sessionService;
         _stateProvider = stateProvider;
         _httpClient = httpClient;
+        _storageService = storageService;
     }
 
     public async Task<UsuarioAutenticado> Login(LoginRequest login)
@@ -26,6 +29,7 @@ public class AuthenticationService : IAuthenticationService
         var usuario = await _restClientService.Post<UsuarioAutenticado, LoginRequest>("authentication/login", login);
         var token = usuario.JwtToken;
         await _sessionService.SaveJwtToken(token);
+        await _storageService.SetItemAsync(Constants.StorageConstants.CodigoSucursal, usuario.Compania.Codigo);
         await _stateProvider.StateChangedAsync();
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return usuario;

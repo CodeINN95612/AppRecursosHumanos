@@ -1,5 +1,6 @@
 ﻿@page "/trabajador"
 
+@using Blazored.LocalStorage;
 @using RecursosHumanos.Client.Services.Common;
 @using RecursosHumanos.Client.Services.TrabajadorService;
 @using RecursosHumanos.Shared.Models;
@@ -8,13 +9,7 @@
 @inject DialogMsgService _dialogService;
 @inject NavigationManager _navManager;
 @inject ITrabajadorService _trabajadorService;
-
-<MudContainer MaxWidth="MaxWidth.ExtraSmall">
-<MudToolBar Class="mb-4">
-        <MudNumericField @bind-Value="_sucursal" Label="Sucursal" Variant="Variant.Outlined" Class="mr-4" />
-        <MudButton OnClick="SearchLista" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Search" Variant="Variant.Outlined">Buscar</MudButton>
-</MudToolBar>
-</MudContainer>
+@inject ILocalStorageService _storageService;
 
 <MudTable Items="@_trabajadores" Filter="@((element) => Filter(element, _searchString))" Dense>
     <ToolBarContent>
@@ -49,21 +44,23 @@
 <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" Label="Nuevo" Style="margin-top:1em;" OnClick="@Nuevo" Class="mb-5" />
 
 @code {
-    private int _sucursal = 1;
-
-    private async void SearchLista()
-    {
-        await Cargar();
-    }
-
     private string _searchString = "";
     private List<Trabajador> _trabajadores = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+            await Cargar();
+    }
 
     private async Task Cargar()
     {
         try
         {
-            _trabajadores = await _trabajadorService.GetAllBySucursal(_sucursal);
+            int sucursal = await _storageService.GetItemAsync<int>(Constants.StorageConstants.CodigoSucursal);
+            _trabajadores = await _trabajadorService.GetAllBySucursal(sucursal);
             StateHasChanged();
         }
         catch (Exception e)
@@ -74,7 +71,7 @@
 
     private void Editar(Trabajador item)
     {
-        _navManager.NavigateTo($"trabajador/{_sucursal}/{item.IdTrabajador}");
+        _navManager.NavigateTo($"trabajador/{item.IdTrabajador}");
     }
 
     private async void Borrar(Trabajador item)
@@ -94,7 +91,7 @@
 
     private void Nuevo()
     {
-        _navManager.NavigateTo($"trabajador/{_sucursal}/{0}");
+        _navManager.NavigateTo($"trabajador/{0}");
     }
 
     private bool Filter(Trabajador trabajador, string searchString)

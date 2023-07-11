@@ -146,7 +146,7 @@ public class RestClientService : IRestClientService
             }
         }
 
-        throw new Exception($"Ha ocurrido un problema indeterminado.");
+        throw new Exception($"Credenciales Invalidas");
     }
 }
 
